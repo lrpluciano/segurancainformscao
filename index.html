@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança e Auditoria de Sistemas - Material de Estudo</title>
+    <!-- Font Awesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f1f5f9;
+            --text-color: #1e293b;
+            --light-text: #64748b;
+            --white: #ffffff;
+            --code-bg: #1e293b;
+            --code-text: #38bdf8;
+            --tip-bg: #eff6ff;
+            --tip-border: #3b82f6;
+            --prof-bg: #ecfdf5;
+            --prof-border: #10b981;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 3rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1.1rem; opacity: 0.9; }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        ul.nav-menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        ul.nav-menu li a {
+            display: block;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        ul.nav-menu li a:hover {
+            color: var(--primary-color);
+            background-color: var(--bg-color);
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: var(--white);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            scroll-margin-top: 70px;
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        section h3 {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        section p { margin-bottom: 1rem; color: var(--text-color); }
+
+        ul.content-list { list-style: none; padding-left: 10px; }
+        ul.content-list li { margin-bottom: 1.2rem; padding-left: 1.5rem; position: relative; }
+        ul.content-list li::before { content: "🔹"; position: absolute; left: 0; top: 2px; }
+        strong { color: var(--secondary-color); font-weight: 700; }
+
+        /* CID Cards */
+        .cid-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .cid-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .cid-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            background: var(--white);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .cid-card i { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+        .cid-card.conf i { color: var(--primary-color); }
+        .cid-card.inte i { color: var(--success-color); }
+        .cid-card.dispo i { color: var(--warning-color); }
+        .cid-card.auten i { color: var(--secondary-color); }
+        .cid-card h4 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-color); }
+
+        /* Phishing Flowchart */
+        .phishing-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #fff1f2;
+            border-radius: 8px;
+            border: 1px solid #fecdd3;
+        }
+
+        .flow-step {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #fecdd3;
+            min-width: 130px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .flow-step i { font-size: 1.5rem; color: var(--danger-color); margin-bottom: 0.5rem; }
+        .flow-step p { font-size: 0.9rem; font-weight: 600; margin: 0; }
+        .flow-arrow { color: var(--danger-color); font-size: 1.5rem; }
+
+        /* Caesar Cipher Visual */
+        .cipher-box {
+            background: var(--code-bg);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .cipher-alphabet {
+            display: flex;
+            gap: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 1rem;
+            min-width: 800px;
+        }
+
+        .cipher-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #334155;
+            padding: 5px 8px;
+            border-radius: 4px;
+        }
+
+        .cipher-original { color: var(--light-text); font-size: 0.8rem; }
+        .cipher-shifted { color: var(--code-text); font-weight: bold; font-size: 1.1rem; }
+
+        /* Network Diagram */
+        .network-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-color);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        .net-cloud {
+            background: var(--white);
+            border: 2px dashed var(--light-text);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: var(--light-text);
+            font-weight: bold;
+        }
+
+        .net-arrow { font-size: 2rem; color: var(--light-text); margin: 0.5rem 0; }
+
+        .net-firewall {
+            background: var(--danger-color);
+            color: var(--white);
+            padding: 1rem 3rem;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .net-zones {
+            display: flex;
+            gap: 20px;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .net-zone {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 4px solid;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .net-zone.dmz { border-color: var(--warning-color); }
+        .net-zone.internal { border-color: var(--success-color); }
+        .net-zone h5 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .net-zone p { font-size: 0.9rem; color: var(--light-text); }
+
+        /* Professor Notes (Geral e Tópicos) */
+        .professor-note {
+            background-color: var(--prof-bg);
+            border-left: 5px solid var(--prof-border);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .professor-note .icon {
+            font-size: 2rem;
+            color: var(--prof-border);
+        }
+
+        .professor-note h4 {
+            color: var(--success-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .professor-note p {
+            margin: 0;
+            font-style: italic;
+            color: #374151;
+        }
+
+        /* Tip Box */
+        .tip-box {
+            background-color: var(--tip-bg);
+            border-left: 5px solid var(--tip-border);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 4px;
+        }
+
+        .tip-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Code Box */
+        .code-box {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-text);
+            font-size: 0.9rem;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            section { padding: 1.5rem; }
+            section h2 { font-size: 1.5rem; }
+            ul.nav-menu li a { padding: 0.8rem 1rem; font-size: 0.9rem; }
+            .cipher-alphabet { transform: scale(0.9); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fas fa-shield-alt"></i> Segurança e Auditoria de Sistemas</h1>
+        <p>Material de Apoio e Revisão de Conceitos Fundamentais</p>
+    </header>
+
+    <nav>
+        <ul class="nav-menu">
+            <li><a href="#intro"><i class="fas fa-chalkboard-teacher"></i> Introdução</a></li>
+            <li><a href="#topico1"><i class="fas fa-lock"></i> Pilares da Segurança</a></li>
+            <li><a href="#topico2"><i class="fas fa-bug"></i> Ataques e Falhas</a></li>
+            <li><a href="#topico3"><i class="fas fa-key"></i> Criptografia</a></li>
+            <li><a href="#topico4"><i class="fas fa-shield-virus"></i> Prevenção</a></li>
+            <li><a href="#topico5"><i class="fas fa-network-wired"></i> Redes</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Intro Section -->
+        <section id="intro">
+            <h2>Palavras do Professor</h2>
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-user-tie"></i></div>
+                <div>
+                    <h4>Bem-vindos à nossa jornada de estudos!</h4>
+                    <p>Olá, alunos! Preparei este material interativo para facilitar a compreensão de conceitos que são a base da nossa disciplina. Segurança da Informação não é apenas sobre tecnologia, mas sobre entender como as pessoas, processos e sistemas interagem. Usem as analogias que deixei ao longo do texto para conectar a teoria com o mundo real. Leia com calma, explorem os recursos visuais e não tenham medo de errar durante as atividades. Estou aqui para apoiá-los!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tópico 1 -->
+        <section id="topico1">
+            <h2>1. Os Pilares da Segurança da Informação</h2>
+            <p>Pensem na Segurança da Informação como a construção de um cofre. Para que esse cofre seja realmente seguro, ele precisa atender a princípios fundamentais (conhecidos como Tríade CID, mais a Autenticidade):</p>
+            
+            <div class="cid-grid">
+                <div class="cid-card conf">
+                    <i class="fas fa-user-secret"></i>
+                    <h4>Confidencialidade</h4>
+                    <p>É o segredo. Garante que a informação só seja acessada por quem tem permissão. Se um hacker rouba dados de clientes, a confidencialidade foi quebrada.</p>
+                </div>
+                <div class="cid-card inte">
+                    <i class="fas fa-check-double"></i>
+                    <h4>Integridade</h4>
+                    <p>É a veracidade. Garante que a informação não foi alterada de forma indevida. Protege contra modificações não autorizadas nos dados.</p>
+                </div>
+                <div class="cid-card dispo">
+                    <i class="fas fa-clock"></i>
+                    <h4>Disponibilidade</h4>
+                    <p>É o acesso. De nada adianta um sistema seguro se ele fica fora do ar. A informação deve estar acessível quando necessário.</p>
+                </div>
+                <div class="cid-card auten">
+                    <i class="fas fa-id-badge"></i>
+                    <h4>Autenticidade</h4>
+                    <p>Confirma que a pessoa ou sistema é quem diz ser. É o "RG digital", confirmando a identidade dos usuários.</p>
+                </div>
+            </div>
+
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                    <h4>Nota do Professor</h4>
+                    <p>Imagine que você envia uma carta pelo correio. A <strong>Confidencialidade</strong> garante que ela está dentro de um envelope lacrado e só quem tem a chave pode abrir. A <strong>Integridade</strong> garante que o carteiro não alterou o texto escrito. A <strong>Disponibilidade</strong> garante que o correio não perdeu a carta e ela chegou no tempo certo. E a <strong>Autenticidade</strong> é a assinatura no final da carta, provando que foi você quem escreveu.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tópico 2 -->
+        <section id="topico2">
+            <h2>2. Ataques Cibernéticos e Vulnerabilidades Comuns</h2>
+            <p>Quando uma empresa sofre um incidente, geralmente há a exploração de vulnerabilidades. Veja como o ataque de <strong>Phishing</strong> funciona na prática:</p>
+            
+            <div class="phishing-flow">
+                <div class="flow-step"><i class="fas fa-skull-crossbones"></i><p>Atacante cria página falsa</p></div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step"><i class="fas fa-envelope"></i><p>Envia e-mail enganoso</p></div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step"><i class="fas fa-user"></i><p>Vítima digita a senha</p></div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-step"><i class="fas fa-database"></i><p>Atacante rouba a credencial</p></div>
+            </div>
+
+            <ul class="content-list" style="margin-top: 2rem;">
+                <li><strong>Ataque de Força Bruta:</strong> O atacante usa um software que tenta milhares de combinações de senhas por minuto até achar a correta.</li>
+                <li><strong>Senhas em Texto Puro:</strong> Se o banco de dados for roubado, o atacante lê as senhas exatamente como foram digitadas, sem nenhuma proteção.</li>
+            </ul>
+
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                    <h4>Nota do Professor</h4>
+                    <p>Por que será que ainda existem tantas senhas vazadas? A tecnologia evoluiu, mas o elo mais fraco muitas vezes é o próprio ser humano. O <strong>Phishing</strong> não ataca o servidor, ele ataca a mente do usuário. Já a <strong>Força Bruta</strong> ataca a matemática. Se vocês imaginarem um ladrão de cofre tentando milhares de combinações de chaves por segundo, entenderão por que senhas curtas são perigosas e por que precisamos de bloqueios de conta!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tópico 3 -->
+        <section id="topico3">
+            <h2>3. Criptografia e Proteção de Senhas</h2>
+            <p>A criptografia embaralha os dados para que apenas quem tem a "chave" consiga lê-los.</p>
+            
+            <h3><i class="fas fa-fingerprint"></i> Como armazenar senhas de forma segura</h3>
+            <p>A prática correta não é usar criptografia simétrica ou assimétrica, mas sim utilizar <strong>Funções de Hash Criptográficas (como bcrypt, PBKDF2 ou Argon2)</strong>.</p>
+
+            <div class="code-box">
+                Senha original: 123456<br>
+                Hash gerado (bcrypt): $2b$12$exemploDeTextoEmbaralhadoAleatorio...
+            </div>
+
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                    <h4>Nota do Professor</h4>
+                    <p>Pensem no Hash não como um cadeado com chave, mas como uma <strong>máquina de moer carne</strong>. Você pode transformar um pedaço de carne (a senha original) em almôndegas (o hash), mas é impossível pegar as almôndegas e reverter para o pedaço de carne original. Por isso usamos Hash para senhas: se o hacker roubar as "almôndegas", ele não consegue descobrir a "carne".</p>
+                </div>
+            </div>
+
+            <h3><i class="fas fa-scroll"></i> Cifra de César</h3>
+            <p>É uma das criptografias mais antigas do mundo. Funciona por <strong>deslocamento</strong> no alfabeto. Veja o exemplo visual com deslocamento de 4 casas:</p>
+
+            <div class="cipher-box">
+                <div style="text-align: center; margin-bottom: 10px; color: var(--code-text);">
+                    Para criptografar, avançamos 4 letras. <br>
+                    Ex: A vira E. Se você recebeu um "E", para decifrar, volte 4 letras (E -> D -> C -> B -> A).
+                </div>
+                <div class="cipher-alphabet">
+                    <div class="cipher-col"><span class="cipher-original">A</span><span class="cipher-shifted">E</span></div>
+                    <div class="cipher-col"><span class="cipher-original">B</span><span class="cipher-shifted">F</span></div>
+                    <div class="cipher-col"><span class="cipher-original">C</span><span class="cipher-shifted">G</span></div>
+                    <div class="cipher-col"><span class="cipher-original">D</span><span class="cipher-shifted">H</span></div>
+                    <div class="cipher-col"><span class="cipher-original">E</span><span class="cipher-shifted">I</span></div>
+                    <div class="cipher-col"><span class="cipher-original">F</span><span class="cipher-shifted">J</span></div>
+                    <div class="cipher-col"><span class="cipher-original">G</span><span class="cipher-shifted">K</span></div>
+                    <div class="cipher-col"><span class="cipher-original">H</span><span class="cipher-shifted">L</span></div>
+                    <div class="cipher-col"><span class="cipher-original">I</span><span class="cipher-shifted">M</span></div>
+                    <div class="cipher-col"><span class="cipher-original">J</span><span class="cipher-shifted">N</span></div>
+                    <div class="cipher-col"><span class="cipher-original">K</span><span class="cipher-shifted">O</span></div>
+                    <div class="cipher-col"><span class="cipher-original">L</span><span class="cipher-shifted">P</span></div>
+                    <div class="cipher-col"><span class="cipher-original">M</span><span class="cipher-shifted">Q</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tópico 4 -->
+        <section id="topico4">
+            <h2>4. Medidas de Segurança e Prevenção</h2>
+            <p>Para evitar que ataques tenham sucesso, é necessário adotar medidas preventivas:</p>
+            
+            <ul class="content-list">
+                <li><strong>Contra Phishing:</strong> Implementar <strong>Autenticação Multifator (MFA/2FA)</strong>. <i class="fas fa-mobile-alt" style="color:var(--primary-color)"></i> Mesmo que o usuário entregue a senha no golpe, o atacante não terá o código gerado no celular.</li>
+                <li><strong>Contra Força Bruta:</strong> Configurar <strong>Política de Bloqueio de Conta</strong>. <i class="fas fa-lock" style="color:var(--danger-color)"></i> Após 3 ou 5 tentativas erradas, a conta é bloqueada.</li>
+                <li><strong>Contra Texto Puro:</strong> Utilizar <strong>Hash com Salt</strong>. <i class="fas fa-pepper-hot" style="color:var(--warning-color)"></i> Um dado extra adicionado à senha antes de gerar o hash.</li>
+            </ul>
+
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                    <h4>Nota do Professor</h4>
+                    <p>Em segurança, falamos muito em "Defesa em Profundidade" (ou Cebola de Segurança). Não basta apenas uma camada de proteção. Se a sua senha for roubada (falha na primeira camada), o MFA barra o invasor (segunda camada). Se o invasor tentar milhares de senhas, o bloqueio de conta barra ele (terceira camada). A segurança é construída sobre camadas que se apoiam umas nas outras!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tópico 5 -->
+        <section id="topico5">
+            <h2>5. Segurança de Redes</h2>
+            <p>Ao proteger a infraestrutura, montamos a defesa perimetral. Pensem na rede corporativa como um castelo:</p>
+            
+            <div class="network-diagram">
+                <div class="net-cloud"><i class="fas fa-globe"></i> Internet (Ameaças Externas)</div>
+                <div class="net-arrow"><i class="fas fa-arrow-down"></i></div>
+                <div class="net-firewall"><i class="fas fa-shield-alt"></i> FIREWALL (A Muralha)</div>
+                <div class="net-arrow"><i class="fas fa-arrow-down"></i></div>
+                
+                <div class="net-zones">
+                    <div class="net-zone dmz">
+                        <h5><i class="fas fa-server"></i> DMZ (Zona Desmilitarizada)</h5>
+                        <p>O "Pátio Externo". Servidores visíveis na internet (ex: Servidor Web). Se for atacado, o invasor fica preso aqui.</p>
+                    </div>
+                    <div class="net-zone internal">
+                        <h5><i class="fas fa-database"></i> Rede Interna</h5>
+                        <p>O "Cofre da Coroa". Bancos de dados com senhas e dados de clientes. O acesso da DMZ para cá é bloqueado.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <ul class="content-list" style="margin-top: 1.5rem;">
+                <li><strong>IDS/IPS:</strong> Os "guardas" que patrulham. O IDS detecta tráfego suspeito. O IPS bloqueia a ameaça automaticamente.</li>
+                <li><strong>VPN:</strong> Redes Privadas Virtuais garantem acesso remoto seguro, como um túnel blindado.</li>
+            </ul>
+
+            <div class="professor-note">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <div>
+                    <h4>Nota do Professor</h4>
+                    <p>O conceito de DMZ é fascinante! Se vocês imaginarem um aeroporto, a Internet é a rua do lado de fora, a Rede Interna é o setor restrito onde as bagagens são processadas, e a DMZ é o saguão de embarque. Qualquer um com passagem pode entrar no saguão (DMZ), mas ninguém da rua pode ir direto para o setor de bagagens sem passar pela segurança interna (Firewall interno) e pelos detectores de metais (IDS/IPS). Assim, protegemos o que é mais valoso no coração da rede.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p><strong>Recado Final:</strong> Lembrem-se de sempre utilizar os termos técnicos corretos ao elaborarem as respostas, estruturando o raciocínio de forma clara.</p>
+        <br>
+        <p>Bons estudos! Contem sempre com o tutor eletrônico e o professor da disciplina.</p>
+    </footer>
+
+    <script>
+        // Script para rolagem suave ao clicar nos links do menu
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
